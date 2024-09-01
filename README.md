@@ -217,3 +217,15 @@ conn.close()
 
 print("Data has been inserted into DimCustomer using the stored procedure.")
 ```
+## ADVANTAGES AND CHALLENGES OF SCD 2
+### 1. Advantages of SCD Type 2
+
+  ***Historical Data Preservation:*** Allows you to see how dimensions looked at any point in time.
+  
+  ***Comprehensive Analysis:*** Facilitates time-based analyses, such as customer behavior before and after an event.
+
+### 2. Challenges
+
+  ***Data Volume:*** Keeping a full history increases the size of the dimension table.
+  
+  ***Complexity:*** ETL processes become more complex, requiring careful handling of changes and updates.
