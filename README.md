@@ -177,8 +177,86 @@ EXEC UpsertCustomer
     @postal_code = '10001',
     @country = 'USA';
 ```
+4. GENERATE FAKE DATASET USING PYTHON
+```python
+import random
+import string
+from datetime import datetime, timedelta
+import pandas as pd
 
-4. IMPLEMENTING SCD 2 IN PYTHON BY UPLOADING DATA FROM CSV FILE
+# Helper functions (same as before)
+def random_string(length):
+    return ''.join(random.choices(string.ascii_letters, k=length))
+
+def random_email(first_name, last_name):
+    domains = ["example.com", "mail.com", "test.com"]
+    return f"{first_name.lower()}.{last_name.lower()}@{random.choice(domains)}"
+
+def random_phone():
+    return f"{random.randint(100,999)}-{random.randint(100,999)}-{random.randint(1000,9999)}"
+
+def random_date_of_birth(start_year=1960, end_year=2000):
+    start_date = datetime(start_year, 1, 1)
+    end_date = datetime(end_year, 12, 31)
+    return start_date + timedelta(days=random.randint(0, (end_date - start_date).days))
+
+def random_address():
+    street_num = random.randint(1, 9999)
+    street_name = random_string(random.randint(5, 10))
+    return f"{street_num} {street_name} St"
+
+def random_city_state():
+    cities = [("New York", "NY"), ("Los Angeles", "CA"), ("Chicago", "IL"), 
+              ("Houston", "TX"), ("Phoenix", "AZ"), ("Philadelphia", "PA")]
+    return random.choice(cities)
+
+def random_postal_code():
+    return f"{random.randint(10000, 99999)}"
+
+def random_country():
+    return random.choice(["USA", "Canada", "Mexico"])
+
+def random_effective_date():
+    return datetime.now() - timedelta(days=random.randint(0, 365))
+
+def generate_data(num_records):
+    data = []
+    for i in range(1, num_records + 1):
+        first_name = random_string(random.randint(5, 10))
+        last_name = random_string(random.randint(5, 10))
+        city, state = random_city_state()
+        
+        record = {
+            "customer_id": i,
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": random_email(first_name, last_name),
+            "phone_number": random_phone(),
+            "date_of_birth": random_date_of_birth(),
+            "address": random_address(),
+            "city": city,
+            "state": state,
+            "postal_code": random_postal_code(),
+            "country": random_country(),
+            "effective_date": random_effective_date(),
+            "expiry_date": None  # Assuming initially null for SCD Type 2
+        }
+        data.append(record)
+    
+    return pd.DataFrame(data)
+
+# Generate 10 sample records
+sample_data = generate_data(10)
+
+# Save the DataFrame to a CSV file
+csv_file_path = 'customer_data.csv'
+sample_data.to_csv(csv_file_path, index=False)
+
+print(f"Data saved to {csv_file_path}")
+```
+
+
+5. IMPLEMENTING SCD 2 IN PYTHON BY UPLOADING DATA FROM CSV FILE
 ```python
 import pandas as pd
 import pyodbc
